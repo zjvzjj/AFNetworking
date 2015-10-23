@@ -12,7 +12,8 @@ env:
     - DESTINATION="OS=8.3,name=iPhone 5S" TEST_SCHEME="iOS Tests" EXAMPLE_SCHEME="AFNetworking iOS Example" SDK=iphonesimulator9.1 RUN_TESTS="YES" BUILD_EXAMPLE="NO" POD_LINT="NO"
     - DESTINATION="OS=8.4,name=iPhone 6" TEST_SCHEME="iOS Tests" EXAMPLE_SCHEME="AFNetworking iOS Example" SDK=iphonesimulator9.1 RUN_TESTS="YES" BUILD_EXAMPLE="NO" POD_LINT="NO"
     - DESTINATION="OS=9.0,name=iPhone 6 Plus" TEST_SCHEME="iOS Tests" EXAMPLE_SCHEME="AFNetworking iOS Example" SDK=iphonesimulator9.1 RUN_TESTS="YES" BUILD_EXAMPLE="NO" POD_LINT="NO"
-    - DESTINATION="arch=x86_64" TEST_SCHEME="OS X Tests" SDK=macosx10.11 EXAMPLE_SCHEME="AFNetworking Example" RUN_TESTS="YES" BUILD_EXAMPLE="YES" POD_LINT="NO"
+# TESTS ARE CURRENTLY DISABLED FOR MAC OS X DUE TO THIS ISSUE: https://github.com/travis-ci/travis-ci/issues/4904
+    - DESTINATION="arch=x86_64" TEST_SCHEME="OS X Tests" SDK=macosx10.11 EXAMPLE_SCHEME="AFNetworking Example" RUN_TESTS="NO" BUILD_EXAMPLE="YES" POD_LINT="NO"
 before_install:
   - gem install cocoapods --no-rdoc --no-ri --no-document --quiet
   - gem install xcpretty --no-rdoc --no-ri --no-document --quiet
