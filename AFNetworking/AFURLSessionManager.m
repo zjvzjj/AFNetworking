@@ -468,9 +468,6 @@ static NSString * const AFNSURLSessionTaskDidSuspendNotification = @"com.alamofi
         }
     }];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskDidResume:) name:AFNSURLSessionTaskDidResumeNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskDidSuspend:) name:AFNSURLSessionTaskDidSuspendNotification object:nil];
-
     return self;
 }
 
@@ -678,6 +675,12 @@ static NSString * const AFNSURLSessionTaskDidSuspendNotification = @"com.alamofi
 }
 
 #pragma mark -
+- (void)addNotificationObserverForTask:(NSURLSessionTask *)task {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskDidResume:) name:AFNSURLSessionTaskDidResumeNotification object:task];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskDidSuspend:) name:AFNSURLSessionTaskDidSuspendNotification object:task];
+}
+
+#pragma mark -
 
 - (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request
                             completionHandler:(void (^)(NSURLResponse *response, id responseObject, NSError *error))completionHandler
@@ -686,6 +689,8 @@ static NSString * const AFNSURLSessionTaskDidSuspendNotification = @"com.alamofi
     dispatch_sync(url_session_manager_creation_queue(), ^{
         dataTask = [self.session dataTaskWithRequest:request];
     });
+
+    [self addNotificationObserverForTask:dataTask];
 
     [self addDelegateForDataTask:dataTask completionHandler:completionHandler];
 
@@ -703,6 +708,8 @@ static NSString * const AFNSURLSessionTaskDidSuspendNotification = @"com.alamofi
     dispatch_sync(url_session_manager_creation_queue(), ^{
         uploadTask = [self.session uploadTaskWithRequest:request fromFile:fileURL];
     });
+
+    [self addNotificationObserverForTask:uploadTask];
 
     if (!uploadTask && self.attemptsToRecreateUploadTasksForBackgroundSessions && self.session.configuration.identifier) {
         for (NSUInteger attempts = 0; !uploadTask && attempts < AFMaximumNumberOfAttemptsToRecreateBackgroundSessionUploadTask; attempts++) {
@@ -725,6 +732,8 @@ static NSString * const AFNSURLSessionTaskDidSuspendNotification = @"com.alamofi
         uploadTask = [self.session uploadTaskWithRequest:request fromData:bodyData];
     });
 
+    [self addNotificationObserverForTask:uploadTask];
+
     [self addDelegateForUploadTask:uploadTask progress:progress completionHandler:completionHandler];
 
     return uploadTask;
@@ -738,6 +747,8 @@ static NSString * const AFNSURLSessionTaskDidSuspendNotification = @"com.alamofi
     dispatch_sync(url_session_manager_creation_queue(), ^{
         uploadTask = [self.session uploadTaskWithStreamedRequest:request];
     });
+
+    [self addNotificationObserverForTask:uploadTask];
 
     [self addDelegateForUploadTask:uploadTask progress:progress completionHandler:completionHandler];
 
@@ -756,6 +767,8 @@ static NSString * const AFNSURLSessionTaskDidSuspendNotification = @"com.alamofi
         downloadTask = [self.session downloadTaskWithRequest:request];
     });
 
+    [self addNotificationObserverForTask:downloadTask];
+
     [self addDelegateForDownloadTask:downloadTask progress:progress destination:destination completionHandler:completionHandler];
 
     return downloadTask;
@@ -770,6 +783,8 @@ static NSString * const AFNSURLSessionTaskDidSuspendNotification = @"com.alamofi
     dispatch_sync(url_session_manager_creation_queue(), ^{
         downloadTask = [self.session downloadTaskWithResumeData:resumeData];
     });
+
+    [self addNotificationObserverForTask:downloadTask];
 
     [self addDelegateForDownloadTask:downloadTask progress:progress destination:destination completionHandler:completionHandler];
 
