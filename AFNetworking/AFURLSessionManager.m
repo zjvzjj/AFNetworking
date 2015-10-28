@@ -680,6 +680,11 @@ static NSString * const AFNSURLSessionTaskDidSuspendNotification = @"com.alamofi
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskDidSuspend:) name:AFNSURLSessionTaskDidSuspendNotification object:task];
 }
 
+- (void)removeNotificationObserverForTask:(NSURLSessionTask *)task {
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:AFNSURLSessionTaskDidResumeNotification object:task];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:AFNSURLSessionTaskDidResumeNotification object:task];
+}
+
 #pragma mark -
 
 - (NSURLSessionDataTask *)dataTaskWithRequest:(NSURLRequest *)request
@@ -1040,6 +1045,7 @@ didCompleteWithError:(NSError *)error
         self.taskDidComplete(session, task, error);
     }
 
+    [self removeNotificationObserverForTask:task];
 }
 
 #pragma mark - NSURLSessionDataDelegate
@@ -1069,6 +1075,9 @@ didBecomeDownloadTask:(NSURLSessionDownloadTask *)downloadTask
         [self removeDelegateForTask:dataTask];
         [self setDelegate:delegate forTask:downloadTask];
     }
+
+    [self removeNotificationObserverForTask:dataTask];
+    [self addNotificationObserverForTask:downloadTask];
 
     if (self.dataTaskDidBecomeDownloadTask) {
         self.dataTaskDidBecomeDownloadTask(session, dataTask, downloadTask);
@@ -1137,6 +1146,8 @@ didFinishDownloadingToURL:(NSURL *)location
     if (delegate) {
         [delegate URLSession:session downloadTask:downloadTask didFinishDownloadingToURL:location];
     }
+
+    [self removeNotificationObserverForTask:downloadTask];
 }
 
 - (void)URLSession:(NSURLSession *)session
