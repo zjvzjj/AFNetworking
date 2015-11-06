@@ -65,8 +65,8 @@ module Fastlane
         
         date = DateTime.now
         result = Hash.new
-        result[:header] = "\n\n##[#{params[:milestone]}](https://github.com/#{params[:github_owner]}/#{params[:github_repository]}/releases/tag/#{params[:milestone]}) (#{date.strftime("%m/%d/%Y")})"
-        result[:header] << "\nReleased on #{date.strftime("%A, %B %d, %Y")}. All issues associated with this milestone can be found using this [filter](https://github.com/#{params[:github_owner]}/#{params[:github_repository]}/issues?q=milestone%3A#{params[:milestone]}+is%3Aclosed)."
+        result[:title] = "\n\n##[#{params[:milestone]}](https://github.com/#{params[:github_owner]}/#{params[:github_repository]}/releases/tag/#{params[:milestone]}) (#{date.strftime("%m/%d/%Y")})"
+        result[:header] = "\nReleased on #{date.strftime("%A, %B %d, %Y")}. All issues associated with this milestone can be found using this [filter](https://github.com/#{params[:github_owner]}/#{params[:github_repository]}/issues?q=milestone%3A#{params[:milestone]}+is%3Aclosed)."
         
         result[:changelog] = "\n"
         sections.each do |section|
@@ -144,7 +144,7 @@ module Fastlane
       end
 
       def self.return_value
-        "Returns a hash containing a well formatted :header, and the :changelog itself, both in markdown"
+        "Returns a hash containing a well formatted :title, :header, and the :changelog itself, both in markdown"
       end
 
       def self.authors
